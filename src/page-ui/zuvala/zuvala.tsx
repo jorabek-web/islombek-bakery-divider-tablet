@@ -22,9 +22,9 @@ import { Button } from "@/components/ui/button";
 
 
 export const Zuvala = () => {
-  const currentBakery = JSON.parse(localStorage.getItem("currentBakery") || "{}")
+  const currentBakery = JSON.parse(localStorage.getItem("bakerRoom") || "{}")
   const { data: getUsers } = useGetUsersQuery(["DRIVER"])
-  const { data: bakeryDoughs } = useBakeryDoughsQuery({ bakeryId: currentBakery?.id, status: ["DIVIDED"] })
+  const { data: bakeryDoughs } = useBakeryDoughsQuery({ id: currentBakery })
 
   const [timers, setTimers] = useState<{ [key: string]: string }>({});
 
