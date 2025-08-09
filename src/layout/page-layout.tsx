@@ -56,7 +56,9 @@ export const PageLayout = () => {
       <div className="py-[80px] px-[20px]">
         <Outlet />
       </div>
-      {location.pathname === "/" && <Menu />}
+      {(location.pathname === "/" || location.pathname === "/profile") && (
+        <Menu />
+      )}
     </div>
   );
 };

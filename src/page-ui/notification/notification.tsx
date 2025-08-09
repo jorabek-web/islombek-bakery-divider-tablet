@@ -44,7 +44,7 @@ export const ParkashNotification = () => {
               key={item._id}
               className="rounded-[12px] border-[2px] border-[#FFCC15] p-[10px] flex items-center justify-between"
             >
-              <p className="text-[20px] font-[600]">Xamir</p>
+              <p className="text-[20px] font-[600]">Xamir keldi</p>
               <div className="flex flex-col gap-2 pt-[10px]">
                 <div className="flex items-center gap-x-2">
                   <LuCalendarDays size={20} />
