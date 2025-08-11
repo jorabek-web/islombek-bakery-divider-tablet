@@ -14,6 +14,8 @@ import {
   BakeryRedirectResponse,
   BakeryRequest,
   BakeryResponse,
+  DivideRequest,
+  DivideResponse,
 } from "./types";
 
 export const BakeryApi = baseApi.injectEndpoints({
@@ -39,6 +41,13 @@ export const BakeryApi = baseApi.injectEndpoints({
       }),
       providesTags: [API_TAGS.BAKERY],
     }),
+    divide: build.query<DivideResponse[], DivideRequest>({
+      query: ({ id }) => ({
+        url: PATHS.DIVIDE + id,
+        method: "GET",
+      }),
+      providesTags: [API_TAGS.BAKERY],
+    }),
     bakeryBreads: build.query<BakeryBreadsResponse, BakeryBreadsRequest>({
       query: ({ bakeryId, breadStatus, doughStatus }) => ({
         url: PATHS.BAKERY_BREADS,
@@ -48,13 +57,15 @@ export const BakeryApi = baseApi.injectEndpoints({
       providesTags: [API_TAGS.BAKERY],
     }),
     bakeryDivide: build.mutation<BakeryDivideResponse[], BakeryDivideRequest>({
-      query: (data) => ({
-        url: PATHS.BAKERY_DIVIDE,
-        method: "POST",
-        body: data,
+      query: ({ id, bakerRoomId, dough_ball_count, divided_by_workers }) => ({
+        url: "/dough/" + id + PATHS.BAKERY_DIVIDE,
+        params: { bakerRoomId },
+        method: "PATCH",
+        body: { dough_ball_count, divided_by_workers },
       }),
       invalidatesTags: [API_TAGS.BAKERY],
     }),
+
     bakeryBake: build.mutation<BakeryBakeResponse[], BakeryBakeRequest>({
       query: ({ dough, baked, baker }) => ({
         url: PATHS.BAKERY_BAKE,
@@ -67,10 +78,10 @@ export const BakeryApi = baseApi.injectEndpoints({
       BakeryRedirectResponse[],
       BakeryRedirectRequest
     >({
-      query: ({ dough, driver }) => ({
-        url: PATHS.BAKERY_REDIRECT,
-        method: "POST",
-        body: { dough, driver },
+      query: ({ id, bakerRoomId, transferred_driver }) => ({
+        url: `/dough/${id}/${bakerRoomId}${PATHS.BAKERY_REDIRECT}`,
+        method: "PATCH",
+        body: { transferred_driver },
       }),
       invalidatesTags: [API_TAGS.BAKERY],
     }),
@@ -87,4 +98,5 @@ export const {
   useBakeryDivideMutation,
   useBakeryBakeMutation,
   useBakeryRedirectMutation,
+  useDivideQuery,
 } = BakeryApi;

@@ -1,5 +1,6 @@
 import {
   useBakeryQuery,
+  useDivideQuery,
   useGetUsersQuery,
   useProfileQuery,
 } from "@/integration/api";
@@ -34,6 +35,7 @@ interface EmployeeData {
 export const ParkashHome = () => {
   const { data: profile } = useProfileQuery({});
   const currentBakery = localStorage.getItem("bakerRoom") || "{}";
+  const { data: divide } = useDivideQuery({ id: currentBakery });
 
   const { data: bakery } = useBakeryQuery({
     id: currentBakery!,
@@ -188,10 +190,28 @@ export const ParkashHome = () => {
       </div>
       <div className="border-[1px] border-[#FFCC15] rounded-[8px] p-[13px] bg-white flex items-center justify-between mt-[15px]">
         <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
-          0
+          {MoneyFormatter(
+            divide
+              ? divide?.reduce(
+                  (acc, curval) =>
+                    (acc += curval.doughBallInfo.dough_ball_count),
+                  0
+                )
+              : 0
+          )}
         </p>
         <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
-          {/* {MoneyFormatter(String(getBranch?.doughPrice)) || 0} */} 200 000
+          {MoneyFormatter(
+            divide
+              ? divide.reduce(
+                  (acc, curVal) =>
+                    (acc +=
+                      curVal.dough_type.bread_selling_price *
+                      curVal.doughBallInfo.dough_ball_count),
+                  0
+                )
+              : 0
+          )}
         </p>
         <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
           {/* {MoneyFormatter()

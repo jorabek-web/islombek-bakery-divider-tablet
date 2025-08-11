@@ -60,6 +60,40 @@ interface BakeryResponse {
 //     }
 // }
 
+interface DoughType {
+  _id: string;
+  title: string;
+  price_for_baker: string;
+  price_for_divider: string;
+  bread_selling_price: string;
+}
+
+interface DoughBallInfo {
+  dough_ball_count: number;
+  divided_by_workers: Array;
+}
+
+interface DivideRequest {
+  id: string;
+}
+
+interface DivideResponse {
+  doughBallInfo: DoughBallInfo;
+  _id: string;
+  branch: string;
+  dough_type: DoughType;
+  doughroomId: string;
+  status: number;
+  send_to_baker_room: string;
+  type: string;
+  isReady: boolean;
+  current_location: string;
+  transferred_driver: string | null;
+  isBakerRoomTransferredToBakerRoom: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface BakeryDoughResponse {
   _id: string;
   doughroom: DoughroomResponse;
@@ -73,7 +107,7 @@ interface BakeryDoughResponse {
   left?: number;
   createdAt: string;
   updatedAt: string;
-  dough_type: {title: string}
+  dough_type: { title: string };
 }
 
 interface BakeryDoughsRequest {
@@ -105,16 +139,16 @@ interface BakeryBreadsRequest {
 }
 
 interface BakeryDivideResponse {
-  _id: string;
-  createdAt: string;
-  updatedAt: string;
+  data: {
+    message: string;
+  };
 }
 
 interface BakeryDivideRequest {
-  bakery: string;
-  dough: string;
-  rounds: number;
-  dividers: string[];
+  id: string;
+  bakerRoomId: string;
+  dough_ball_count: string;
+  divided_by_workers: [];
 }
 
 interface BakeryBakeResponse {
@@ -137,6 +171,7 @@ interface BakeryRedirectResponse {
 }
 
 interface BakeryRedirectRequest {
-  dough: string;
-  driver: string;
+  id: string;
+  bakerRoomId: string;
+  transferred_driver: string;
 }

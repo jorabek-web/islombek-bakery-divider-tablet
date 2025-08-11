@@ -68,9 +68,11 @@ export const Xamir = () => {
           className="my-3 rounded-[8px] bg-white p-[10px] border-[1px] border-[#FFCC15] flex items-center justify-between text-[16px] text-[#1C2C57] font-[500]"
         >
           <div className="flex items-center justify-between w-full gap-y-3">
-            <p>{item.dough_type.title}</p>
-            <p>{format(new Date(item.updatedAt), "HH:mm")}</p>
-            <p className="bg-[#FFCC15] p-1 rounded-[8px]">
+            <p className=" w-1/3">{item.dough_type.title}</p>
+            <p className=" w-1/4">
+              {format(new Date(item.updatedAt), "HH:mm")}
+            </p>
+            <p className="bg-[#FFCC15] p-1 rounded-[8px] w-1/4">
               {timers[item._id] || "00:00:00"}
             </p>
             <Popover>
