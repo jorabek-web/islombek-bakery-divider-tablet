@@ -11,9 +11,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useBakeryDivideMutation, useGetUsersQuery } from "@/integration/api";
+import {
+  useBakeryDivideUpdateMutation,
+  useGetUsersQuery,
+} from "@/integration/api";
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { useForm, Controller } from "react-hook-form";
@@ -24,22 +27,39 @@ interface FormValues {
 }
 
 export const EditBlank = ({ doughId }: { doughId: string }) => {
-  const { data: getUsers } = useGetUsersQuery(["DIVIDER"])
-  const [bakeryDivide, { isLoading: isLoadingDivide }] = useBakeryDivideMutation()
+  const { data: getUsers } = useGetUsersQuery(["DIVIDER"]);
+  const [bakeryDivide, { isLoading: isLoadingDivide }] =
+    useBakeryDivideUpdateMutation();
   const [selectedDividers, setSelectedDividers] = useState<string[]>([]);
-  const [open, setOpen] = useState(false)
-  const currentBakery = JSON.parse(localStorage.getItem("currentBakery") || "{}")
+  const [open, setOpen] = useState(false);
+  const currentBakery = JSON.parse(
+    localStorage.getItem("currentBakery") || "{}"
+  );
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
     defaultValues: {
       zuvala: "",
       dividers: [],
-    }
+    },
   });
 
   const onSubmit = async (data: FormValues) => {
+    if (!doughId || !currentBakery || !data || !data.zuvala || !data.dividers)
+      return;
+
     try {
-      await bakeryDivide({ dough: doughId, dividers: data.dividers, rounds: Number(data.zuvala), bakery: currentBakery?.id });
+      await bakeryDivide({
+        id: doughId,
+        bakerRoomId: currentBakery,
+        dough_ball_count: Number(data.zuvala),
+        divided_by_workers: data.dividers,
+      });
+
       reset();
       setOpen(false);
     } catch (error) {
@@ -78,7 +98,9 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
                         className="p-1 border border-[#FFCC15] rounded-[8px] outline-none w-full"
                       />
                       {errors.zuvala && (
-                        <span className="text-red-500 text-sm">{errors.zuvala.message}</span>
+                        <span className="text-red-500 text-sm">
+                          {errors.zuvala.message}
+                        </span>
                       )}
                     </>
                   )}
@@ -98,7 +120,7 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
                       <Select
                         onValueChange={(value) => {
                           const newSelected = selectedDividers.includes(value)
-                            ? selectedDividers.filter(id => id !== value)
+                            ? selectedDividers.filter((id) => id !== value)
                             : [...selectedDividers, value];
 
                           setSelectedDividers(newSelected);
@@ -113,7 +135,11 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
                             <SelectItem
                               key={user._id}
                               value={user._id}
-                              className={selectedDividers.includes(user._id) ? "bg-[#FFCC15]/10" : ""}
+                              className={
+                                selectedDividers.includes(user._id)
+                                  ? "bg-[#FFCC15]/10"
+                                  : ""
+                              }
                             >
                               {user.fullName}
                             </SelectItem>
@@ -123,7 +149,9 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
 
                       <div className="flex flex-wrap gap-2">
                         {selectedDividers.map((dividerId) => {
-                          const divider = getUsers?.find(u => u._id === dividerId);
+                          const divider = getUsers?.find(
+                            (u) => u._id === dividerId
+                          );
                           return (
                             <Badge
                               key={dividerId}
@@ -135,7 +163,9 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
                                 type="button"
                                 className="ml-1 hover:text-red-500"
                                 onClick={() => {
-                                  const newSelected = selectedDividers.filter(id => id !== dividerId);
+                                  const newSelected = selectedDividers.filter(
+                                    (id) => id !== dividerId
+                                  );
                                   setSelectedDividers(newSelected);
                                   field.onChange(newSelected);
                                 }}

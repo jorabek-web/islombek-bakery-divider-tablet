@@ -2,12 +2,18 @@ import { API_TAGS } from "@/constants/ApiTags";
 import { baseApi } from "../baseApi";
 import { PATHS } from "./paths";
 import {
+  AddDividerRequest,
+  AddDividerResponse,
+  AddDividerSalaryRequest,
+  AddDividerSalaryResponse,
   BakeryBakeRequest,
   BakeryBakeResponse,
   BakeryBreadsRequest,
   BakeryBreadsResponse,
   BakeryDivideRequest,
   BakeryDivideResponse,
+  BakeryDivideUpdateRequest,
+  BakeryDivideUpdateResponse,
   BakeryDoughResponse,
   BakeryDoughsRequest,
   BakeryRedirectRequest,
@@ -16,6 +22,8 @@ import {
   BakeryResponse,
   DivideRequest,
   DivideResponse,
+  SalaryRequest,
+  SalaryResponse,
 } from "./types";
 
 export const BakeryApi = baseApi.injectEndpoints({
@@ -48,6 +56,13 @@ export const BakeryApi = baseApi.injectEndpoints({
       }),
       providesTags: [API_TAGS.BAKERY],
     }),
+    bakerySalary: build.query<SalaryResponse, SalaryRequest>({
+      query: ({ id }) => ({
+        url: PATHS.SALARY + id,
+        method: "GET",
+      }),
+      providesTags: [API_TAGS.BAKERY],
+    }),
     bakeryBreads: build.query<BakeryBreadsResponse, BakeryBreadsRequest>({
       query: ({ bakeryId, breadStatus, doughStatus }) => ({
         url: PATHS.BAKERY_BREADS,
@@ -56,9 +71,43 @@ export const BakeryApi = baseApi.injectEndpoints({
       }),
       providesTags: [API_TAGS.BAKERY],
     }),
+    AddDivider: build.mutation<AddDividerResponse, AddDividerRequest>({
+      query: ({ id, user }) => ({
+        url: PATHS.DIVIDER + id + PATHS.ADD,
+        method: "PATCH",
+        body: { user },
+      }),
+      invalidatesTags: [API_TAGS.BAKERY],
+    }),
+
+    AddDividerSalary: build.mutation<
+      AddDividerSalaryResponse,
+      AddDividerSalaryRequest
+    >({
+      query: ({ id, user, salary }) => ({
+        url: PATHS.DIVIDER + id + PATHS.ADD_SALARY,
+        method: "PATCH",
+        body: { user, salary },
+      }),
+      invalidatesTags: [API_TAGS.BAKERY],
+    }),
+
     bakeryDivide: build.mutation<BakeryDivideResponse[], BakeryDivideRequest>({
       query: ({ id, bakerRoomId, dough_ball_count, divided_by_workers }) => ({
         url: "/dough/" + id + PATHS.BAKERY_DIVIDE,
+        params: { bakerRoomId },
+        method: "PATCH",
+        body: { dough_ball_count, divided_by_workers },
+      }),
+      invalidatesTags: [API_TAGS.BAKERY],
+    }),
+
+    bakeryDivideUpdate: build.mutation<
+      BakeryDivideUpdateResponse,
+      BakeryDivideUpdateRequest
+    >({
+      query: ({ id, bakerRoomId, dough_ball_count, divided_by_workers }) => ({
+        url: "/dough/" + id + PATHS.BAKERY_DIVIDE_UPDATE,
         params: { bakerRoomId },
         method: "PATCH",
         body: { dough_ball_count, divided_by_workers },
@@ -96,7 +145,11 @@ export const {
   useBakeryDoughsQuery,
   useBakeryBreadsQuery,
   useBakeryDivideMutation,
+  useBakeryDivideUpdateMutation,
   useBakeryBakeMutation,
   useBakeryRedirectMutation,
   useDivideQuery,
+  useBakerySalaryQuery,
+  useAddDividerMutation,
+  useAddDividerSalaryMutation,
 } = BakeryApi;

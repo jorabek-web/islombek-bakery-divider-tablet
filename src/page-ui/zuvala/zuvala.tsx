@@ -1,10 +1,7 @@
 import { Link } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
 import { Title } from "@/components";
-import {
-  useDivideQuery,
-  useGetUsersQuery,
-} from "@/integration";
+import { useDivideQuery, useGetUsersQuery } from "@/integration";
 import { useEffect, useState } from "react";
 import {
   Popover,
@@ -105,7 +102,10 @@ export const Zuvala = () => {
                   <PopoverContent className="bg-white border-2 border-[#1C2C57] text-[#1C2C57] rounded-[8px] max-w-max">
                     <EditBlank doughId={item._id} />
 
-                    <Forward getUsers={getUsers || []} doughId={item._id} />
+                    <Forward
+                      getUsers={getUsers || []}
+                      doughId={item.dough_type._id}
+                    />
                   </PopoverContent>
                 </Popover>
               </div>

@@ -1,12 +1,21 @@
 import {
   useBakeryQuery,
-  useDivideQuery,
+  useBakerySalaryQuery,
   useGetUsersQuery,
   useProfileQuery,
+  useAddDividerMutation,
+  useAddDividerSalaryMutation,
 } from "@/integration/api";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import { MoneyFormatter } from "@/utils/money-formatter";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -16,7 +25,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader } from "@/components";
-import { MoneyFormatter } from "@/utils/money-formatter";
 import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 
@@ -26,79 +34,72 @@ interface MenuType {
   href: string;
 }
 
-interface EmployeeData {
-  id: string;
-  name: string;
-  amount: string;
-}
+// interface EmployeeData {
+//   id: string;
+//   name: string;
+//   amount: string;
+// }
 
 export const ParkashHome = () => {
   const { data: profile } = useProfileQuery({});
   const currentBakery = localStorage.getItem("bakerRoom") || "{}";
-  const { data: divide } = useDivideQuery({ id: currentBakery });
+  const { data: bakerySalary } = useBakerySalaryQuery({ id: currentBakery });
+  const [addDivider] = useAddDividerMutation();
+  const [addDividerSalary] = useAddDividerSalaryMutation();
 
   const { data: bakery } = useBakeryQuery({
     id: currentBakery!,
   });
 
-  const [employees, setEmployees] = useState<EmployeeData[]>([]);
+  // const [employees, setEmployees] = useState<EmployeeData[]>([]);
+  // const [, setLastResetDate] = useState<string>("");
+  // const [currentBakeryId, setCurrentBakeryId] = useState<string>("");
+  const [currentAmount, setCurrentAmount] = useState<string | number>();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentAmount, setCurrentAmount] = useState("");
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
-    null
-  );
-  const [, setLastResetDate] = useState<string>("");
-  const [currentBakeryId, setCurrentBakeryId] = useState<string>("");
-  const prevBakeryIdRef = useRef<string>("");
+  const [selectedDividerId, setSelectedDividerId] = useState<string>();
+  // const prevBakeryIdRef = useRef<string>("");
 
-  const loadEmployeesForBakery = (bakeryId: string) => {
-    const today = new Date().toISOString().split("T")[0];
-    const savedLastResetDate = localStorage.getItem("lastResetDate") || "";
-    const bakeryEmployeesKey = `employees_${bakeryId}`;
+  // const loadEmployeesForBakery = (bakeryId: string) => {
+  //   const today = new Date().toISOString().split("T")[0];
+  //   const savedLastResetDate = localStorage.getItem("lastResetDate") || "";
+  //   const bakeryEmployeesKey = `employees_${bakeryId}`;
 
-    if (savedLastResetDate !== today) {
-      localStorage.setItem("lastResetDate", today);
-      localStorage.setItem(bakeryEmployeesKey, JSON.stringify([]));
-      setEmployees([]);
-      setLastResetDate(today);
-    } else {
-      const savedEmployees = localStorage.getItem(bakeryEmployeesKey);
-      if (savedEmployees) {
-        setEmployees(JSON.parse(savedEmployees));
-      } else {
-        localStorage.setItem(bakeryEmployeesKey, JSON.stringify([]));
-        setEmployees([]);
-      }
-      setLastResetDate(savedLastResetDate);
-    }
-  };
+  //   if (savedLastResetDate !== today) {
+  //     localStorage.setItem("lastResetDate", today);
+  //     localStorage.setItem(bakeryEmployeesKey, JSON.stringify([]));
+  //     setEmployees([]);
+  //     setLastResetDate(today);
+  //   } else {
+  //     const savedEmployees = localStorage.getItem(bakeryEmployeesKey);
+  //     if (savedEmployees) {
+  //       setEmployees(JSON.parse(savedEmployees));
+  //     } else {
+  //       localStorage.setItem(bakeryEmployeesKey, JSON.stringify([]));
+  //       setEmployees([]);
+  //     }
+  //     setLastResetDate(savedLastResetDate);
+  //   }
+  // };
 
-  useEffect(() => {
-    const checkBakeryChange = () => {
-      const currentBakery = localStorage.getItem("bakerRoom") || "{}";
+  // useEffect(() => {
+  //   const checkBakeryChange = () => {
+  //     const currentBakery = localStorage.getItem("bakerRoom") || "{}";
 
-      const bakeryId = currentBakery || "";
+  //     const bakeryId = currentBakery || "";
 
-      if (bakeryId && bakeryId !== prevBakeryIdRef.current) {
-        setCurrentBakeryId(bakeryId);
-        prevBakeryIdRef.current = bakeryId;
-        loadEmployeesForBakery(bakeryId);
-      }
-    };
+  //     if (bakeryId && bakeryId !== prevBakeryIdRef.current) {
+  //       setCurrentBakeryId(bakeryId);
+  //       prevBakeryIdRef.current = bakeryId;
+  //       loadEmployeesForBakery(bakeryId);
+  //     }
+  //   };
 
-    checkBakeryChange();
+  //   checkBakeryChange();
 
-    const intervalId = setInterval(checkBakeryChange, 500);
+  //   const intervalId = setInterval(checkBakeryChange, 500);
 
-    return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
-    if (currentBakeryId) {
-      const bakeryEmployeesKey = `employees_${currentBakeryId}`;
-      localStorage.setItem(bakeryEmployeesKey, JSON.stringify(employees));
-    }
-  }, [employees, currentBakeryId]);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   const [menu, setMenu] = useState<MenuType[]>([
     {
@@ -116,10 +117,6 @@ export const ParkashHome = () => {
     "DIVIDER",
   ]);
 
-  // const { data: getBranch } = useGetBranchQuery({
-  //   id: profile?.branch || "",
-  // });
-
   useEffect(() => {
     if (currentBakery && bakery?.bakerRoom) {
       setMenu((prev) =>
@@ -136,42 +133,31 @@ export const ParkashHome = () => {
     }
   }, [currentBakery, bakery]);
 
-  const handleEmployeeSelect = (value: string) => {
-    const employee = getUsers?.find((user) => user._id === value);
-    if (employee) {
-      const existingEmployee = employees.find((emp) => emp.id === employee._id);
+  const handleDividerSelect = async (value: string) => {
+    if (!value || !currentBakery) return;
+    console.log(value);
 
-      if (!existingEmployee) {
-        setEmployees((prev) => [
-          ...prev,
-          {
-            id: employee._id,
-            name: employee.fullName,
-            amount: "0",
-          },
-        ]);
-      }
+    const res = await addDivider({
+      id: currentBakery,
+      user: value,
+    });
 
-      setSelectedEmployeeId(employee._id);
-      setCurrentAmount(existingEmployee?.amount || "0");
-      setIsModalOpen(true);
-    }
+    console.log(res);
   };
 
-  const handleSubmit = () => {
-    if (selectedEmployeeId) {
-      setEmployees((prev) =>
-        prev.map((emp) =>
-          emp.id === selectedEmployeeId
-            ? { ...emp, amount: currentAmount }
-            : emp
-        )
-      );
+  const handleSubmit = async () => {
+    if (!selectedDividerId || !currentAmount || !currentBakery) return;
 
-      setIsModalOpen(false);
-      setCurrentAmount("");
-      setSelectedEmployeeId(null);
-    }
+    const res = await addDividerSalary({
+      id: currentBakery,
+      user: selectedDividerId,
+      salary: Number(currentAmount),
+    });
+
+    console.log(res);
+    setSelectedDividerId("");
+    setCurrentAmount("");
+    setIsModalOpen(false);
   };
 
   return (
@@ -188,60 +174,100 @@ export const ParkashHome = () => {
           </Link>
         ))}
       </div>
-      <div className="border-[1px] border-[#FFCC15] rounded-[8px] p-[13px] bg-white flex items-center justify-between mt-[15px]">
-        <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
-          {MoneyFormatter(
-            divide
-              ? divide?.reduce(
-                  (acc, curval) =>
-                    (acc += curval.doughBallInfo.dough_ball_count),
-                  0
-                )
-              : 0
-          )}
-        </p>
-        <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
-          {MoneyFormatter(
-            divide
-              ? divide.reduce(
-                  (acc, curVal) =>
-                    (acc +=
-                      curVal.dough_type.bread_selling_price *
-                      curVal.doughBallInfo.dough_ball_count),
-                  0
-                )
-              : 0
-          )}
-        </p>
-        <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
-          {/* {MoneyFormatter()
-           String((doughs?.length || 0) * (getBranch?.doughPrice || 0))
-          } */}{" "}
-          200
-        </p>
-      </div>
 
-      {employees.map((employee) => (
-        <div
-          key={employee.id}
-          className="border-[1px] border-[#FFCC15] rounded-[8px] p-[13px] bg-white flex items-center justify-between mt-[15px] cursor-pointer"
-          onClick={() => {
-            setSelectedEmployeeId(employee.id);
-            setCurrentAmount(employee.amount);
-            setIsModalOpen(true);
-          }}
-        >
-          <p className="text-[#1C2C57] text-[16px] font-semibold">
-            {employee.name}
-          </p>
-          <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
-            {MoneyFormatter(employee.amount)}
-          </p>
-        </div>
-      ))}
+      <Accordion type="multiple" className="my-5">
+        <AccordionItem value="item">
+          <AccordionTrigger className="w-full h-12 p-2 rounded-lg bg-white border border-[#FFCC15]">
+            <div className="w-full h-full flex items-center justify-between">
+              <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
+                {MoneyFormatter(bakerySalary?.dividerInfo.totalCount || 0)}
+              </p>
+              <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
+                {MoneyFormatter(bakerySalary?.dividerInfo.totalMoney || 0)}
+              </p>
+              <div></div>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <Table>
+              <TableBody>
+                <TableRow className="h-6 flex items-center justify-between">
+                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-4 w-2/3">
+                    Zuvala turi
+                  </TableCell>
+                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-4 w-1/2">
+                    Soni
+                  </TableCell>
+                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-4 w-1/2">
+                    Narxi
+                  </TableCell>
+                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-4 w-1/2">
+                    Umumiy
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+
+            <div className="bg-white rounded-xl border-2 border-[#FFCC15]">
+              <Table>
+                <TableBody>
+                  {bakerySalary?.dividerInfo.doughs &&
+                  bakerySalary?.dividerInfo.doughs.length ? (
+                    bakerySalary.dividerInfo.doughs.map((item) => (
+                      <TableRow
+                        key={item._id}
+                        className="h-10 hover:bg-transparent border-b border-b-[#FFCC15] flex items-center justify-between"
+                      >
+                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                          Patir
+                        </TableCell>
+                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                          {MoneyFormatter(580)}
+                        </TableCell>
+                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                          {MoneyFormatter(576)}
+                        </TableCell>
+                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                          {MoneyFormatter(334080)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow className="h-8 hover:bg-transparent border-b border-b-[#FFCC15] flex items-center justify-between">
+                      <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                        mavjud emas
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
+      {bakerySalary?.dividerInfo.dividers &&
+        bakerySalary?.dividerInfo.dividers.map((divider) => (
+          <div
+            key={divider.user._id}
+            className="border-[1px] border-[#FFCC15] rounded-[8px] p-[13px] bg-white flex items-center justify-between mt-[15px] cursor-pointer"
+            onClick={() => {
+              setSelectedDividerId(divider.user._id);
+              setCurrentAmount(divider.salary);
+              setIsModalOpen(true);
+            }}
+          >
+            <p className="text-[#1C2C57] text-[16px] font-semibold">
+              {divider?.user.fullName}
+            </p>
+            <p className="text-[#1C2C57] text-[14px] font-semibold rounded-[3px] bg-[#D9D9D9] px-[10px] shrink-0">
+              {MoneyFormatter(divider?.salary)}
+            </p>
+          </div>
+        ))}
 
       <div className="pt-[35px]">
-        <Select aria-label="Select User" onValueChange={handleEmployeeSelect}>
+        <Select aria-label="Select User" onValueChange={handleDividerSelect}>
           <SelectTrigger
             aria-haspopup="listbox"
             aria-expanded="false"
