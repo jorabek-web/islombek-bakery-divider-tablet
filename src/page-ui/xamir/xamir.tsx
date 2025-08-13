@@ -49,8 +49,6 @@ export const Xamir = () => {
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  console.log(bakeryDoughs);
-
   return (
     <div>
       <div className="border-b-2 border-[#FFCC15] rounded-b-[30px] bg-[#1C2C57] p-[12px] pt-[20px] -ml-[20px] fixed top-0 w-full">
@@ -83,10 +81,7 @@ export const Xamir = () => {
               </PopoverTrigger>
               <PopoverContent className="bg-white border-2 border-[#1C2C57] text-[#1C2C57] rounded-[8px] max-w-max">
                 <EditBlank doughId={item._id} />
-                <Forward
-                  getUsers={getUsers || []}
-                  doughId={item.dough_type._id}
-                />
+                <Forward getUsers={getUsers || []} doughId={item._id} />
               </PopoverContent>
             </Popover>
           </div>

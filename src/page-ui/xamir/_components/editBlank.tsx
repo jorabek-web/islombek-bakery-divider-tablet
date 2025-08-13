@@ -43,11 +43,14 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
   });
 
   const onSubmit = async (data: FormValues) => {
+    if (!doughId || !currentBakery || !data || !data.zuvala || !data.dividers)
+      return;
+
     try {
       await bakeryDivide({
         id: doughId,
         bakerRoomId: currentBakery,
-        dough_ball_count: data.zuvala,
+        dough_ball_count: Number(data.zuvala),
         divided_by_workers: data.dividers,
       });
 

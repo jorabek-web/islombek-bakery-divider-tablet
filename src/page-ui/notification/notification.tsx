@@ -1,11 +1,18 @@
 import { Title } from "@/components";
+import { useGetNotificationsQuery } from "@/integration";
 import { FaRegClock } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 import { LuCalendarDays } from "react-icons/lu";
 import { Link } from "react-router-dom";
 
 export const ParkashNotification = () => {
-  // const { data: getNotifications, refetch } = useGetNotificationsQuery({});
+  const userId = localStorage.getItem("userId") || "";
+  const {
+    data: notifications,
+    // refetch,
+  } = useGetNotificationsQuery({
+    id: userId,
+  });
 
   // useEffect(() => {
   //   const handleNotification = () => refetch();
@@ -29,7 +36,7 @@ export const ParkashNotification = () => {
         </div>
       </div>
       <div className="pt-[35px] text-white space-y-3">
-        {[
+        {/* {[
           {
             type: "DELIVERED",
             _id: 1234534545,
@@ -37,36 +44,47 @@ export const ParkashNotification = () => {
             createdAt: 123456,
             delivery: { breads: 203 },
           },
-        ]
-          ?.filter((item) => item.type === "DELIVERED" && item.delivery)
-          .map((item) => (
-            <div
-              key={item._id}
-              className="rounded-[12px] border-[2px] border-[#FFCC15] p-[10px] flex items-center justify-between"
-            >
-              <p className="text-[20px] font-[600]">Xamir keldi</p>
-              <div className="flex flex-col gap-2 pt-[10px]">
-                <div className="flex items-center gap-x-2">
-                  <LuCalendarDays size={20} />
-                  <p className="text-[10px] font-[400]">
-                    {new Date(item.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex items-center gap-x-2">
-                  <FaRegClock size={20} />
-                  <p className="text-[10px] font-[400]">
-                    {new Date(item.createdAt).toLocaleTimeString()}
-                  </p>
-                </div>
-              </div>
-              {/* {item?.status === "PENDING" && (
+        ] */}
+        {notifications ? (
+          notifications?.length ? (
+            notifications
+              ?.filter((item) => item.type === "DELIVERED" && item.delivery)
+              .map((item) => (
+                <div
+                  key={item._id}
+                  className="rounded-[12px] border-[2px] border-[#FFCC15] p-[10px] flex items-center justify-between"
+                >
+                  <p className="text-[20px] font-[600]">Xamir keldi</p>
+                  <div className="flex flex-col gap-2 pt-[10px]">
+                    <div className="flex items-center gap-x-2">
+                      <LuCalendarDays size={20} />
+                      <p className="text-[10px] font-[400]">
+                        {new Date(item.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-x-2">
+                      <FaRegClock size={20} />
+                      <p className="text-[10px] font-[400]">
+                        {new Date(item.createdAt).toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </div>
+                  {/* {item?.status === "PENDING" && (
                             // <div className="flex items-center justify-between pt-[25px]">
                             //     <Button variant='destructive' onClick={() => updateNotification({ id: item._id, status: "REJECTED" })}>Bekor qilish</Button>
                             //     <Button variant='greenary' onClick={() => updateNotification({ id: item._id, status: "ACCEPTED" })}>Tasdiqlash</Button>
                             // </div>
                         )} */}
-            </div>
-          ))}
+                </div>
+              ))
+          ) : (
+            <p className="text-center text-white">
+              hozircha bildirishnomalar mavjud emas
+            </p>
+          )
+        ) : (
+          <p className="text-center text-white">Loading...</p>
+        )}
       </div>
     </>
   );

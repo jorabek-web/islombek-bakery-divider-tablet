@@ -9,8 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { Forward } from "../xamir/_components/forward";
-import { EditBlank } from "./_components";
+import { EditBlank, Forward } from "./_components";
 
 export const Zuvala = () => {
   const currentBakery = localStorage.getItem("bakerRoom") || "";
@@ -48,8 +47,6 @@ export const Zuvala = () => {
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
-
-  console.log(divide);
 
   return (
     <div>
@@ -102,10 +99,7 @@ export const Zuvala = () => {
                   <PopoverContent className="bg-white border-2 border-[#1C2C57] text-[#1C2C57] rounded-[8px] max-w-max">
                     <EditBlank doughId={item._id} />
 
-                    <Forward
-                      getUsers={getUsers || []}
-                      doughId={item.dough_type._id}
-                    />
+                    <Forward getUsers={getUsers || []} doughId={item._id} />
                   </PopoverContent>
                 </Popover>
               </div>

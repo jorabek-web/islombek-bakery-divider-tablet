@@ -50,56 +50,10 @@ export const ParkashHome = () => {
   const { data: bakery } = useBakeryQuery({
     id: currentBakery!,
   });
-
-  // const [employees, setEmployees] = useState<EmployeeData[]>([]);
-  // const [, setLastResetDate] = useState<string>("");
-  // const [currentBakeryId, setCurrentBakeryId] = useState<string>("");
   const [currentAmount, setCurrentAmount] = useState<string | number>();
+  const [currentMeAmount, setCurrentMeAmount] = useState<number>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDividerId, setSelectedDividerId] = useState<string>();
-  // const prevBakeryIdRef = useRef<string>("");
-
-  // const loadEmployeesForBakery = (bakeryId: string) => {
-  //   const today = new Date().toISOString().split("T")[0];
-  //   const savedLastResetDate = localStorage.getItem("lastResetDate") || "";
-  //   const bakeryEmployeesKey = `employees_${bakeryId}`;
-
-  //   if (savedLastResetDate !== today) {
-  //     localStorage.setItem("lastResetDate", today);
-  //     localStorage.setItem(bakeryEmployeesKey, JSON.stringify([]));
-  //     setEmployees([]);
-  //     setLastResetDate(today);
-  //   } else {
-  //     const savedEmployees = localStorage.getItem(bakeryEmployeesKey);
-  //     if (savedEmployees) {
-  //       setEmployees(JSON.parse(savedEmployees));
-  //     } else {
-  //       localStorage.setItem(bakeryEmployeesKey, JSON.stringify([]));
-  //       setEmployees([]);
-  //     }
-  //     setLastResetDate(savedLastResetDate);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const checkBakeryChange = () => {
-  //     const currentBakery = localStorage.getItem("bakerRoom") || "{}";
-
-  //     const bakeryId = currentBakery || "";
-
-  //     if (bakeryId && bakeryId !== prevBakeryIdRef.current) {
-  //       setCurrentBakeryId(bakeryId);
-  //       prevBakeryIdRef.current = bakeryId;
-  //       loadEmployeesForBakery(bakeryId);
-  //     }
-  //   };
-
-  //   checkBakeryChange();
-
-  //   const intervalId = setInterval(checkBakeryChange, 500);
-
-  //   return () => clearInterval(intervalId);
-  // }, []);
 
   const [menu, setMenu] = useState<MenuType[]>([
     {
@@ -135,26 +89,28 @@ export const ParkashHome = () => {
 
   const handleDividerSelect = async (value: string) => {
     if (!value || !currentBakery) return;
-    console.log(value);
 
-    const res = await addDivider({
+    await addDivider({
       id: currentBakery,
       user: value,
     });
-
-    console.log(res);
   };
 
   const handleSubmit = async () => {
-    if (!selectedDividerId || !currentAmount || !currentBakery) return;
+    if (
+      !selectedDividerId ||
+      !Number(currentAmount) ||
+      Number(currentAmount) <= 0 ||
+      !currentBakery
+    )
+      return;
 
-    const res = await addDividerSalary({
+    await addDividerSalary({
       id: currentBakery,
       user: selectedDividerId,
       salary: Number(currentAmount),
     });
 
-    console.log(res);
     setSelectedDividerId("");
     setCurrentAmount("");
     setIsModalOpen(false);
@@ -219,16 +175,16 @@ export const ParkashHome = () => {
                         className="h-10 hover:bg-transparent border-b border-b-[#FFCC15] flex items-center justify-between"
                       >
                         <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
-                          Patir
+                          {item.doughType.title}
                         </TableCell>
                         <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
-                          {MoneyFormatter(580)}
+                          {MoneyFormatter(item.count)}
                         </TableCell>
                         <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
-                          {MoneyFormatter(576)}
+                          {MoneyFormatter(item.doughType.price_for_divider)}
                         </TableCell>
                         <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
-                          {MoneyFormatter(334080)}
+                          {MoneyFormatter(item.totalMoney)}
                         </TableCell>
                       </TableRow>
                     ))
@@ -254,6 +210,7 @@ export const ParkashHome = () => {
             onClick={() => {
               setSelectedDividerId(divider.user._id);
               setCurrentAmount(divider.salary);
+              setCurrentMeAmount(divider.salary);
               setIsModalOpen(true);
             }}
           >
@@ -311,9 +268,36 @@ export const ParkashHome = () => {
                   type="number"
                   value={currentAmount}
                   onChange={(e) => setCurrentAmount(e.target.value)}
-                  className="w-full border border-[#FFCC15] rounded-[8px] p-2 text-[#1C2C57]"
+                  onKeyDown={(e) => {
+                    if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  className={`w-full border border-[#FFCC15] rounded-[8px] p-2 text-[#1C2C57] ${
+                    currentAmount &&
+                    bakerySalary &&
+                    Number(currentAmount) >
+                      bakerySalary!.dividerInfo.remainingMoney! +
+                        Number(currentMeAmount) &&
+                    "border-red-600"
+                  }`}
                   placeholder="Summani kiriting"
                 />
+                {currentAmount &&
+                  bakerySalary &&
+                  Number(currentAmount) >
+                    bakerySalary!.dividerInfo.remainingMoney! +
+                      Number(currentMeAmount) && (
+                    <p className="text-red-600 text-sm mt-1">
+                      kiritilgan summa bo'luvchilar uchun ajratilgan summadan
+                      katta
+                    </p>
+                  )}
+                {Number(currentAmount) <= 0 && (
+                  <p className="text-red-600 text-sm mt-1">
+                    summani to'g'ri kiriting
+                  </p>
+                )}
               </div>
               <Button
                 variant="yellow"

@@ -49,15 +49,15 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
   });
 
   const onSubmit = async (data: FormValues) => {
-    if (!doughId || !currentBakery || !data || !data.zuvala || !data.dividers)
-      return;
+    if (!doughId || !currentBakery || !data || !data.zuvala) return;
 
     try {
       await bakeryDivide({
         id: doughId,
         bakerRoomId: currentBakery,
         dough_ball_count: Number(data.zuvala),
-        divided_by_workers: data.dividers,
+        ...(data.dividers &&
+          data.dividers.length > 0 && { divided_by_workers: data.dividers }),
       });
 
       reset();
@@ -114,7 +114,7 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
                 <Controller
                   name="dividers"
                   control={control}
-                  rules={{ required: "Kamida bitta bo'luvchi tanlang" }}
+                  // rules={{ required: "Kamida bitta bo'luvchi tanlang" }}
                   render={({ field }) => (
                     <div className="space-y-2">
                       <Select
@@ -177,11 +177,11 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
                         })}
                       </div>
 
-                      {errors.dividers && (
+                      {/* {errors.dividers && (
                         <span className="text-red-500 text-sm">
                           {errors.dividers.message}
                         </span>
-                      )}
+                      )} */}
                     </div>
                   )}
                 />

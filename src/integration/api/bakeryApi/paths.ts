@@ -11,4 +11,5 @@ export enum PATHS {
   BAKERY_DIVIDE_UPDATE = "/edit-divide-dough-to-dough-balls",
   BAKERY_BAKE = "/bakery/bake",
   BAKERY_REDIRECT = "/baker-room-from-transferred-to-baker-room",
+  DIVIDE_REDIRECT = "/dough-ball-transferred-to-baker-room",
 }

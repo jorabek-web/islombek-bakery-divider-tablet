@@ -1,7 +1,7 @@
 import { ProfileResponse } from "../authApi/types";
 
 interface UserProfile {
-  user: ProfileResponse
+  user: ProfileResponse;
 }
 
 interface BakerRoom {
@@ -65,10 +65,6 @@ interface DivideResponse {
   updatedAt: string;
 }
 
-interface SalaryRequest {
-  id: string;
-}
-
 interface UserInfo {
   _id: string;
   role: string;
@@ -99,6 +95,10 @@ interface Divider {
 }
 interface Dough {
   _id: string;
+  doughType: DoughType;
+  count: number;
+  totalMoney: number;
+  type: string;
 }
 
 interface DividerInfo {
@@ -108,6 +108,10 @@ interface DividerInfo {
   doughs: Dough[];
   transferredCount: number;
   remainingMoney: number;
+}
+
+interface SalaryRequest {
+  id: string;
 }
 
 interface SalaryResponse {
@@ -243,7 +247,7 @@ interface BakeryDivideUpdateRequest {
   id: string;
   bakerRoomId: string;
   dough_ball_count: number;
-  divided_by_workers: string[];
+  divided_by_workers?: string[];
 }
 
 interface BakeryDivideUpdateResponse {

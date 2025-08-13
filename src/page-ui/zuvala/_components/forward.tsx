@@ -5,7 +5,7 @@ import {
   SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useBakeryRedirectMutation } from "@/integration";
+import { useDivideRedirectMutation } from "@/integration";
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 
@@ -35,11 +35,11 @@ export const Forward = ({
     },
   });
 
-  const [bakeryRedirect] = useBakeryRedirectMutation();
+  const [divideRedirect] = useDivideRedirectMutation();
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const res = await bakeryRedirect({
+      const res = await divideRedirect({
         id: doughId,
         bakerRoomId: currentBakery,
         transferred_driver: data.drivers,

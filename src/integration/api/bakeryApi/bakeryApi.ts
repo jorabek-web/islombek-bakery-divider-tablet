@@ -128,7 +128,18 @@ export const BakeryApi = baseApi.injectEndpoints({
       BakeryRedirectRequest
     >({
       query: ({ id, bakerRoomId, transferred_driver }) => ({
-        url: `/dough/${id}/${bakerRoomId}${PATHS.BAKERY_REDIRECT}`,
+        url: `/dough/${bakerRoomId}/${id}${PATHS.BAKERY_REDIRECT}`,
+        method: "PATCH",
+        body: { transferred_driver },
+      }),
+      invalidatesTags: [API_TAGS.BAKERY],
+    }),
+    divideRedirect: build.mutation<
+      BakeryRedirectResponse[],
+      BakeryRedirectRequest
+    >({
+      query: ({ id, bakerRoomId, transferred_driver }) => ({
+        url: `/dough-ball/${bakerRoomId}/${id}${PATHS.DIVIDE_REDIRECT}`,
         method: "PATCH",
         body: { transferred_driver },
       }),
@@ -152,4 +163,5 @@ export const {
   useBakerySalaryQuery,
   useAddDividerMutation,
   useAddDividerSalaryMutation,
+  useDivideRedirectMutation,
 } = BakeryApi;
