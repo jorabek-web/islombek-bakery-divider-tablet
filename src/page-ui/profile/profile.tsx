@@ -15,20 +15,6 @@ export const Profile = () => {
   const [avatarImg, setavatarImg] = useState(
     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
   );
-  // const navigate = useNavigate();
-
-  // const { data: getExpenses, isLoading } = useGetExpensesQuery({});
-
-  //   useEffect(() => {
-  //     // if (isError) {
-  //     //     useStorage.removeCredentials()
-  //     //     navigate("/login");
-  //     // }
-
-  //     if (profile) {
-  //       setUser(profile);
-  //     }
-  //   }, [profile, isError, navigate]);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -49,14 +35,6 @@ export const Profile = () => {
       console.error("Failed to upload avatar", error);
     }
   };
-
-  //   const balance = getExpenses?.reduce((acc, cur) => {
-  //     if (cur?.receiver?._id === profile?._id && !cur?.reason) {
-  //       return acc + cur?.amount;
-  //     }
-
-  //     return acc;
-  //   }, 0);
 
   useEffect(() => {
     if (profile?.avatar) {
@@ -91,11 +69,7 @@ export const Profile = () => {
         </div>
       </div>
 
-      <div className="text-[#FFCC15] text-[20px] font-[700] pt-[130px]">
-        {/* Balans: {MoneyFormatter(String(balance))} */}
-      </div>
-
-      <div className="grid grid-cols-1 w-full gap-y-[20px] pt-[62px] text-[#1C2C57]">
+      <div className="grid grid-cols-1 w-full gap-y-[20px] pt-[140px] text-[#1C2C57]">
         <ChangePassword />
 
         <LeaveTheAccount />

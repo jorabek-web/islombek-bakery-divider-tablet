@@ -48,12 +48,12 @@ export const authApi = baseApi.injectEndpoints({
       UpdatePasswordRequest
     >({
       query: (body) => ({
-        url: "/user/password",
+        url: PATHS.EDIT_PASSWORD,
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(body),
+        body,
       }),
       invalidatesTags: [API_TAGS.USER],
     }),

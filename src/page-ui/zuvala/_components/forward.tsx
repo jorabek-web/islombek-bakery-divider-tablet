@@ -39,13 +39,12 @@ export const Forward = ({
 
   const onSubmit = async (data: FormValues) => {
     try {
-      const res = await divideRedirect({
+      await divideRedirect({
         id: doughId,
         bakerRoomId: currentBakery,
         transferred_driver: data.drivers,
       });
 
-      console.log(res);
       reset();
       setOpen(false);
     } catch (error) {

@@ -19,11 +19,11 @@ export const TopBar = () => {
     if (bakery) {
       setBakerRoom(bakery.bakerRoom!);
     }
-  }, [bakeryId, bakerRoom, bakery]);
+  }, [bakeryId, bakerRoom, bakery, refetch]);
 
   return (
     <div className="border-b-2 border-[#FFCC15] rounded-b-[30px] bg-[#1C2C57] p-[12px] pt-[20px] fixed top-0 w-full">
-      <div className="flex justify-center items-center gap-5 relative">
+      <div className="flex justify-center items-center gap-5 relative h-10">
         <h2 className="text-white text-[24px] font-[600]">
           {bakerRoom?.title && bakerRoom.title}
         </h2>

@@ -54,6 +54,10 @@ export const ParkashHome = () => {
   const [currentMeAmount, setCurrentMeAmount] = useState<number>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDividerId, setSelectedDividerId] = useState<string>();
+  const [salaryDividerId, setSalaryDividerId] = useState<string[]>();
+  const [getFilteredUsers, setFilteredUsers] = useState<GetAllUsersResponse[]>(
+    []
+  );
 
   const [menu, setMenu] = useState<MenuType[]>([
     {
@@ -70,6 +74,22 @@ export const ParkashHome = () => {
   const { data: getUsers, isLoading: getUsersLoading } = useGetUsersQuery([
     "DIVIDER",
   ]);
+
+  useEffect(() => {
+    const isDividerId = [] as string[];
+    bakerySalary?.dividerInfo.dividers?.forEach((user) => {
+      isDividerId.push(user.user._id);
+    });
+    setSalaryDividerId(isDividerId);
+  }, [getUsers, getUsersLoading, bakerySalary]);
+
+  useEffect(() => {
+    setFilteredUsers(
+      getUsers
+        ?.filter((item) => item?._id !== profile?._id)
+        .filter((divider) => !salaryDividerId?.includes(divider._id)) || []
+    );
+  }, [getUsers, getUsersLoading, profile, salaryDividerId]);
 
   useEffect(() => {
     if (currentBakery && bakery?.bakerRoom) {
@@ -233,21 +253,33 @@ export const ParkashHome = () => {
           >
             <SelectValue id="select-label" placeholder={"Xodim qoshish"} />
           </SelectTrigger>
-          <SelectContent>
-            <SelectGroup role="group">
+          <SelectContent className="bg-white border border-[#FFCC15] rounded-[8px] p-0">
+            <SelectGroup role="group" className="bg-transparent p-0">
               {getUsersLoading && <Loader className="mx-auto size-[50px]" />}
-              {getUsers
-                ?.filter((item) => item?._id !== profile?._id)
-                .map((item) => (
+              {getFilteredUsers.length > 0 ? (
+                getFilteredUsers.map((item, idx) => (
                   <SelectItem
                     key={item._id}
                     value={item._id}
-                    className="text-[#1C2C57] text-[16px] font-semibold"
+                    className={`text-[#1C2C57] text-[16px] font-semibold rounded-none h-8 border-0 ${
+                      ++idx !== getFilteredUsers.length &&
+                      "border-b border-[red]"
+                    } px-4 m-0 outline-none`}
                     role="option"
                   >
                     {item?.fullName}
                   </SelectItem>
-                ))}
+                ))
+              ) : (
+                <SelectItem
+                  value="default"
+                  disabled
+                  className="text-[#1C2C57] text-[16px] font-semibold border-0 h-8 px-4 m-0"
+                  role="option"
+                >
+                  Xodimlar mavjud emas
+                </SelectItem>
+              )}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -265,9 +297,11 @@ export const ParkashHome = () => {
                   Summa kiriting
                 </label>
                 <input
-                  type="number"
-                  value={currentAmount}
-                  onChange={(e) => setCurrentAmount(e.target.value)}
+                  type="string"
+                  value={currentAmount && MoneyFormatter(currentAmount)}
+                  onChange={(e) =>
+                    setCurrentAmount(e.target.value.replace(/[^0-9.]/g, ""))
+                  }
                   onKeyDown={(e) => {
                     if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
                       e.preventDefault();
