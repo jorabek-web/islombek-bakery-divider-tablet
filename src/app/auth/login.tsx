@@ -6,6 +6,7 @@ import { useLoginMutation } from "@/integration/api/authApi";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useStorage } from "@/utils";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const {
@@ -35,11 +36,13 @@ const Login = () => {
       }
     } catch (err) {
       console.error("Login failed", err);
+      toast.error(`Tizimga kirishda xatolik !`);
     }
   };
 
   return (
     <div className="text-center px-4 ">
+      <Toaster />
       <p className="text-white text-2xl font-bold mt-5">Nonvoyxona</p>
       <img
         src="/logo 1.png"
@@ -97,7 +100,9 @@ const Login = () => {
           )}
         />
         {error && (
-          <p className="text-red-500">Login failed. Please try again.</p>
+          <p className="text-red-500">
+            Xatolik yuz berdi, Iltimos qaytadan urining !
+          </p>
         )}
         <Button
           type="submit"

@@ -39,9 +39,15 @@ interface DoughType {
   bread_selling_price: number;
 }
 
+interface Divided_by_workers {
+  _id: string;
+  role: string;
+  fullName: string;
+}
+
 interface DoughBallInfo {
   dough_ball_count: number;
-  divided_by_workers: string[];
+  divided_by_workers: Divided_by_workers[];
 }
 
 interface DivideRequest {

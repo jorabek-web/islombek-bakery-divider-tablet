@@ -67,22 +67,25 @@ export const Zuvala = () => {
             key={item?._id}
             className="mt-[60px] rounded-[8px] bg-white p-[10px] border-[1px] border-[#FFCC15] text-[#1C2C57]"
           >
-            <div className="flex items-start justify-between">
-              <div className="space-y-3">
-                <p className="text-[20px] break-words font-[700]">
-                  {/* {item.doughBallInfo.divided_by_workers &&
-                item.doughBallInfo.divided_by_workers.length
-                  ? item.doughBallInfo.divided_by_workers.map((divid) =>
-                      getUser({ id: divid })
-                    )
-                  : "Parkashchi"} */}
-                  shukur/jorabek
+            <div className="flex items-start gap-2 justify-between">
+              <div className="flex flex-col gap-2 justify-between h-full w-2/3">
+                <p
+                  key={item._id}
+                  className="text-[20px] break-words font-[700]"
+                >
+                  {item.doughBallInfo.divided_by_workers &&
+                  item.doughBallInfo.divided_by_workers.length > 0
+                    ? item.doughBallInfo.divided_by_workers
+                        .map((worker) => worker.fullName)
+                        .join("/")
+                        .slice(0)
+                    : "mavjud emas"}
                 </p>
 
                 <p>{item?.doughBallInfo.dough_ball_count} ta zuvala</p>
               </div>
 
-              <div className="space-y-3">
+              <div className="flex flex-col gap-2 justify-between h-full w-1/3">
                 <p className="text-[20px] break-words font-[600]">
                   {item.dough_type.title}
                 </p>

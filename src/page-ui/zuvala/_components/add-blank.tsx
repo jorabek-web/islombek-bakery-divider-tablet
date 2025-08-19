@@ -32,9 +32,7 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
     useBakeryDivideUpdateMutation();
   const [selectedDividers, setSelectedDividers] = useState<string[]>([]);
   const [open, setOpen] = useState(false);
-  const currentBakery = JSON.parse(
-    localStorage.getItem("currentBakery") || "{}"
-  );
+  const currentBakery = localStorage.getItem("bakerRoom") || "{}";
 
   const {
     control,

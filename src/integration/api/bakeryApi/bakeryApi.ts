@@ -107,8 +107,7 @@ export const BakeryApi = baseApi.injectEndpoints({
       BakeryDivideUpdateRequest
     >({
       query: ({ id, bakerRoomId, dough_ball_count, divided_by_workers }) => ({
-        url: "/dough/" + id + PATHS.BAKERY_DIVIDE_UPDATE,
-        params: { bakerRoomId },
+        url: `/dough/${bakerRoomId}/${id}${PATHS.BAKERY_DIVIDE_UPDATE}`,
         method: "PATCH",
         body: { dough_ball_count, divided_by_workers },
       }),
