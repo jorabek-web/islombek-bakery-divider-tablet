@@ -263,7 +263,7 @@ export const ParkashHome = () => {
                     value={item._id}
                     className={`text-[#1C2C57] text-[16px] font-semibold rounded-none h-8 border-0 ${
                       ++idx !== getFilteredUsers.length &&
-                      "border-b border-[red]"
+                      "border-b border-[#FFCC15]"
                     } px-4 m-0 outline-none`}
                     role="option"
                   >

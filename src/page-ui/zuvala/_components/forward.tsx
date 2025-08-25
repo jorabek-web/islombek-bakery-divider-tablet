@@ -1,5 +1,12 @@
 import { Button } from "@/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -77,18 +84,23 @@ export const Forward = ({
                   rules={{ required: "Kamida bitta haydovchi tanlang" }}
                   render={({ field }) => (
                     <>
-                      <select
+                      <Select
                         {...field}
-                        className="w-full p-2 rounded-md border border-[#FFCC15] bg-white text-[#1C2C57] outline-none"
-                        onChange={(e) => field.onChange(e.target.value)}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
                       >
-                        <option value="">Haydovchi tanlang</option>
-                        {getUsers?.map((user) => (
-                          <option key={user._id} value={user._id}>
-                            {user.fullName}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger className="w-full bg-white">
+                          <SelectValue placeholder="Bo'luvchi tanlang" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {getUsers?.map((user) => (
+                            <SelectItem key={user._id} value={user._id}>
+                              {user.fullName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       {errors.drivers && (
                         <span className="text-red-500 text-sm block mt-1">
                           {errors.drivers.message}
