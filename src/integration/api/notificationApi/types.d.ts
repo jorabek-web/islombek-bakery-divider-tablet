@@ -1,7 +1,4 @@
 import { GetNotificationResponse } from "./types.d";
-import { ProfileResponse } from "../authApi/types";
-import { GetExpensesResponse } from "../expenseApi/types";
-import { GetReportResponse } from "../reportApi/types";
 
 export interface GetNotificationRequest {
   id: string;
@@ -9,20 +6,11 @@ export interface GetNotificationRequest {
 
 export interface GetNotificationResponse {
   _id: string;
-  users: string[];
-  status: string;
-  type: string;
-  from: ProfileResponse;
-  expense?: GetExpensesResponse;
-  order?: OrderResponse;
-  report?: GetReportResponse;
-  doughroom?: DoughroomResponse;
-  warehouse?: string;
-  bakery?: BakeryResponse;
-  doughs?: DoughsReponse[];
-  delivery?: {
-    breads: number;
-  };
+  title: string;
+  branch: string;
+  body: string;
+  from: string;
+  toUser: string;
   createdAt: string;
   updatedAt: string;
 }

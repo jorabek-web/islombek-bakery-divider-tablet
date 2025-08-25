@@ -35,27 +35,19 @@ export const ParkashNotification = () => {
           <Title text={"Bildirishnoma"} className="text-white mx-auto" />
         </div>
       </div>
+
       <div className="pt-[35px] text-white space-y-3">
-        {/* {[
-          {
-            type: "DELIVERED",
-            _id: 1234534545,
-            from: { fullName: "Jo'rabk" },
-            createdAt: 123456,
-            delivery: { breads: 203 },
-          },
-        ] */}
         {notifications ? (
-          notifications?.length ? (
-            notifications
-              ?.filter((item) => item.type === "DELIVERED" && item.delivery)
-              .map((item) => (
-                <div
-                  key={item._id}
-                  className="rounded-[12px] border-[2px] border-[#FFCC15] p-[10px] flex items-center justify-between"
-                >
-                  <p className="text-[20px] font-[600]">Xamir keldi</p>
-                  <div className="flex flex-col gap-2 pt-[10px]">
+          notifications?.length > 0 ? (
+            notifications.map((item) => (
+              <div
+                key={item._id}
+                className="rounded-[12px] border-2 border-[#FFCC15] p-3 space-y-2"
+              >
+                <p className="text-[20px] font-[600]">{item.title}</p>
+                <div className="flex items-start justify-between gap-5">
+                  <p className="text-[20px] font-[600]">{item.body}</p>
+                  <div className="flex flex-col gap-2 justify-between pt-[10px]">
                     <div className="flex items-center gap-x-2">
                       <LuCalendarDays size={20} />
                       <p className="text-[10px] font-[400]">
@@ -69,14 +61,9 @@ export const ParkashNotification = () => {
                       </p>
                     </div>
                   </div>
-                  {/* {item?.status === "PENDING" && (
-                            // <div className="flex items-center justify-between pt-[25px]">
-                            //     <Button variant='destructive' onClick={() => updateNotification({ id: item._id, status: "REJECTED" })}>Bekor qilish</Button>
-                            //     <Button variant='greenary' onClick={() => updateNotification({ id: item._id, status: "ACCEPTED" })}>Tasdiqlash</Button>
-                            // </div>
-                        )} */}
                 </div>
-              ))
+              </div>
+            ))
           ) : (
             <p className="text-center text-white">
               hozircha bildirishnomalar mavjud emas
