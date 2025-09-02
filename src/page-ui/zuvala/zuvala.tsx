@@ -100,7 +100,10 @@ export const Zuvala = () => {
                     <BsThreeDotsVertical />
                   </PopoverTrigger>
                   <PopoverContent className="bg-white border-2 border-[#1C2C57] text-[#1C2C57] rounded-[8px] max-w-max">
-                    <EditBlank doughId={item._id} />
+                    <EditBlank
+                      doughId={item._id}
+                      doughCount={item.doughBallInfo.dough_ball_count}
+                    />
 
                     <Forward getUsers={getUsers || []} doughId={item._id} />
                   </PopoverContent>

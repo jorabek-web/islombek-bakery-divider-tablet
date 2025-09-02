@@ -26,7 +26,13 @@ interface FormValues {
   dividers: string[];
 }
 
-export const EditBlank = ({ doughId }: { doughId: string }) => {
+export const EditBlank = ({
+  doughId,
+  doughCount,
+}: {
+  doughId: string;
+  doughCount: number;
+}) => {
   const { data: getUsers } = useGetUsersQuery(["DIVIDER"]);
   const [bakeryDivide, { isLoading: isLoadingDivide }] =
     useBakeryDivideUpdateMutation();
@@ -41,7 +47,7 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
     formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
-      zuvala: "",
+      zuvala: String(doughCount),
       dividers: [],
     },
   });
@@ -93,6 +99,14 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
                       <input
                         {...field}
                         type="text"
+                        onChange={(e) =>
+                          field.onChange(e.target.value.replace(/[^0-9.]/g, ""))
+                        }
+                        onKeyDown={(e) => {
+                          if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
+                            e.preventDefault();
+                          }
+                        }}
                         className="p-1 border border-[#FFCC15] rounded-[8px] outline-none w-full"
                       />
                       {errors.zuvala && (

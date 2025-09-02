@@ -187,8 +187,60 @@ interface AddDividerSalaryRequest {
   salary: number;
 }
 
-interface AddDividerSalaryResponse {
-  message?: string;
+interface DoughInfo {
+  _id: string;
+  doughType: string;
+  count: number;
+  totalMoney: number;
+  type: "DIVIDED" | "BAKED" | string;
+}
+
+interface BakerInfo {
+  totalCount: number;
+  totalMoney: number;
+  bakers: unknown[];
+  doughs: DoughInfo[];
+  remainingMoney: number;
+}
+
+interface Divider {
+  _id: string;
+  salary: number;
+  user: string;
+}
+
+interface DividerInfo {
+  totalCount: number;
+  totalMoney: number;
+  dividers: Divider[];
+  doughs: DoughInfo[];
+  transferredCount: number;
+  remainingMoney: number;
+}
+
+interface AddDividerSalaryDoc {
+  _id: string;
+  bakerRoomId: string;
+  date: string;
+  branch: string;
+  createdAt: string;
+  updatedAt: string;
+  bakerInfo: BakerInfo;
+  dividerInfo: DividerInfo;
+}
+
+export interface AddDividerSalaryResponse {
+    message: string;
+    doc: AddDividerSalaryDoc;
+}
+
+export interface AddDividerSalaryError {
+    status: number;
+    data: {
+      statusCode: number;
+      error: string;
+      message: string;
+    };
 }
 
 interface BakeryDoughResponse {

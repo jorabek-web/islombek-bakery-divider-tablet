@@ -27,6 +27,8 @@ import {
 import { Loader } from "@/components";
 import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { toast, Toaster } from "react-hot-toast";
+import { AddDividerSalaryError } from "@/integration/api/bakeryApi/types";
 
 interface MenuType {
   amount?: number;
@@ -125,19 +127,29 @@ export const ParkashHome = () => {
     )
       return;
 
-    await addDividerSalary({
-      id: currentBakery,
-      user: selectedDividerId,
-      salary: Number(currentAmount),
-    });
+    try {
+      const res = await addDividerSalary({
+        id: currentBakery,
+        user: selectedDividerId,
+        salary: Number(currentAmount),
+      }).unwrap();
 
-    setSelectedDividerId("");
-    setCurrentAmount("");
-    setIsModalOpen(false);
+      if ("message" in res) {
+        toast.success(res.message);
+      }
+
+      setSelectedDividerId("");
+      setCurrentAmount("");
+      setIsModalOpen(false);
+    } catch (error: unknown) {
+      const err = error as AddDividerSalaryError;
+      toast.error(err.data.message ?? "Noma’lum xato yuz berdi");
+    }
   };
 
   return (
     <div className="pt-[35px]">
+      <Toaster position="top-center" />
       <div className="grid grid-cols-2 w-full gap-[10px] pt-[30px]">
         {menu?.map((item, i) => (
           <Link

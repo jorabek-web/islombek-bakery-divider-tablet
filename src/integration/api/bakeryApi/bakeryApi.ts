@@ -4,6 +4,7 @@ import { PATHS } from "./paths";
 import {
   AddDividerRequest,
   AddDividerResponse,
+  AddDividerSalaryError,
   AddDividerSalaryRequest,
   AddDividerSalaryResponse,
   BakeryBakeRequest,
@@ -81,7 +82,7 @@ export const BakeryApi = baseApi.injectEndpoints({
     }),
 
     AddDividerSalary: build.mutation<
-      AddDividerSalaryResponse,
+      AddDividerSalaryResponse | AddDividerSalaryError,
       AddDividerSalaryRequest
     >({
       query: ({ id, user, salary }) => ({
