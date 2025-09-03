@@ -92,6 +92,9 @@ export const EditBlank = ({ doughId }: { doughId: string }) => {
                         {...field}
                         type="number"
                         className="p-1 border border-[#FFCC15] rounded-[8px] outline-none w-full"
+                        onChange={(e) =>
+                          field.onChange(e.target.value.replace(/[^0-9.]/g, ""))
+                        }
                         onKeyDown={(e) => {
                           if (["e", "E", "+", "-", ".", ","].includes(e.key)) {
                             e.preventDefault();

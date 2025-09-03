@@ -92,7 +92,7 @@ export const Forward = ({
                         }}
                       >
                         <SelectTrigger className="w-full bg-white">
-                          <SelectValue placeholder="Bo'luvchi tanlang" />
+                          <SelectValue placeholder="Haydovchi tanlang" />
                         </SelectTrigger>
                         <SelectContent>
                           {getUsers?.map((user) => (
