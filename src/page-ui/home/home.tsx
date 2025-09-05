@@ -44,19 +44,29 @@ interface MenuType {
 
 export const ParkashHome = () => {
   const { data: profile } = useProfileQuery({});
-  const currentBakery = localStorage.getItem("bakerRoom") || "{}";
-  const { data: bakerySalary } = useBakerySalaryQuery({ id: currentBakery });
+  const currentBakery = localStorage.getItem("bakerRoom") || "";
+  const { data: bakerySalary, refetch: brsalaryRefetch } = useBakerySalaryQuery(
+    { id: currentBakery }
+  );
   const [addDivider] = useAddDividerMutation();
   const [addDividerSalary] = useAddDividerSalaryMutation();
-
-  const { data: bakery } = useBakeryQuery({
+  const { data: bakery, refetch: brRefetch } = useBakeryQuery({
     id: currentBakery!,
   });
+
+  useEffect(() => {
+    if (currentBakery) {
+      brsalaryRefetch();
+      brRefetch();
+    }
+  }, [currentBakery]);
+
   const [currentAmount, setCurrentAmount] = useState<string | number>();
   const [currentMeAmount, setCurrentMeAmount] = useState<number>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDividerId, setSelectedDividerId] = useState<string>();
   const [salaryDividerId, setSalaryDividerId] = useState<string[]>();
+  const [dividerSelect, setDividerSelect] = useState<string>("");
   const [getFilteredUsers, setFilteredUsers] = useState<GetAllUsersResponse[]>(
     []
   );
@@ -111,11 +121,19 @@ export const ParkashHome = () => {
 
   const handleDividerSelect = async (value: string) => {
     if (!value || !currentBakery) return;
+    setDividerSelect(value);
+    console.log(value);
 
-    await addDivider({
+    const res = await addDivider({
       id: currentBakery,
       user: value,
     });
+
+    if ("data" in res) {
+      toast.success(res.data!.message);
+    }
+
+    setDividerSelect("");
   };
 
   const handleSubmit = async () => {
@@ -150,6 +168,7 @@ export const ParkashHome = () => {
   return (
     <div className="pt-[35px]">
       <Toaster position="top-center" />
+
       <div className="grid grid-cols-2 w-full gap-[10px] pt-[30px]">
         {menu?.map((item, i) => (
           <Link
@@ -179,17 +198,17 @@ export const ParkashHome = () => {
           <AccordionContent>
             <Table>
               <TableBody>
-                <TableRow className="h-6 flex items-center justify-between">
-                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-4 w-2/3">
+                <TableRow className="h-7 flex items-center justify-between">
+                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-3 w-2/3 min-w-max">
                     Zuvala turi
                   </TableCell>
-                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-4 w-1/2">
+                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-3 w-1/2">
                     Soni
                   </TableCell>
-                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-4 w-1/2">
+                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-3 w-1/2">
                     Narxi
                   </TableCell>
-                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-4 w-1/2">
+                  <TableCell className="font-bold text-[14px] text-[#FFCC15] p-1 px-3 w-1/2">
                     Umumiy
                   </TableCell>
                 </TableRow>
@@ -206,16 +225,16 @@ export const ParkashHome = () => {
                         key={item._id}
                         className="h-10 hover:bg-transparent border-b border-b-[#FFCC15] flex items-center justify-between"
                       >
-                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2 min-w-max">
                           {item.doughType.title}
                         </TableCell>
-                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2 min-w-max">
                           {MoneyFormatter(item.count)}
                         </TableCell>
-                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2 min-w-max">
                           {MoneyFormatter(item.doughType.price_for_divider)}
                         </TableCell>
-                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2">
+                        <TableCell className="font-bold text-[14px] text-[#1C2C57] p-2 px-4 w-1/2 min-w-max">
                           {MoneyFormatter(item.totalMoney)}
                         </TableCell>
                       </TableRow>
@@ -256,7 +275,11 @@ export const ParkashHome = () => {
         ))}
 
       <div className="pt-[35px]">
-        <Select aria-label="Select User" onValueChange={handleDividerSelect}>
+        <Select
+          aria-label="Select User"
+          value={dividerSelect}
+          onValueChange={handleDividerSelect}
+        >
           <SelectTrigger
             aria-haspopup="listbox"
             aria-expanded="false"
